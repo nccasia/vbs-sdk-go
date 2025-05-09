@@ -1,6 +1,7 @@
 package node
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"vbs-sdk-go/pkg/common/http"
@@ -35,7 +36,8 @@ func (c *NodeClient) Sign(data string) (string, error) {
 	if err != nil {
 		return "", errors.WithMessage(err, "exception in signature")
 	}
-	return string(mac), nil
+
+	return base64.StdEncoding.EncodeToString(mac), nil
 }
 
 func (c *NodeClient) Call(method string, req base.ReqInterface, res base.ResInterface) error {
