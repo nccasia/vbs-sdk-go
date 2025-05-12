@@ -1,8 +1,8 @@
 package fabric
 
 import (
-	eventreq "vbs-sdk-go/pkg/core/fabric/model/req/event"
-	eventres "vbs-sdk-go/pkg/core/fabric/model/res/event"
+	eventreq "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/event"
+	eventres "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/res/event"
 
 	"github.com/pkg/errors"
 )

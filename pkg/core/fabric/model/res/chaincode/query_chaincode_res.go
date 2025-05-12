@@ -2,7 +2,8 @@ package chaincode
 
 import (
 	"encoding/base64"
-	"vbs-sdk-go/pkg/core/fabric/base"
+
+	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
 )
 
 type QueryChaincodeResData struct {

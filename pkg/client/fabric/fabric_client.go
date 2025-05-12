@@ -1,9 +1,9 @@
 package fabric
 
 import (
-	"vbs-sdk-go/pkg/client/fabric/node"
-	"vbs-sdk-go/pkg/core/config"
-	"vbs-sdk-go/pkg/core/fabric/base"
+	"github.com/nccasia/vbs-sdk-go/pkg/client/fabric/node"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/config"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
 
 	"github.com/wonderivan/logger"
 )

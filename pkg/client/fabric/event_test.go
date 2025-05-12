@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	req "vbs-sdk-go/pkg/core/fabric/model/req/event"
+	req "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/event"
 )
 
 func TestFabricClient_EventRegister(t *testing.T) {
