@@ -1,4 +1,4 @@
-module vbs-sdk-go
+module github.com/nccasia/vbs-sdk-go
 
 go 1.23.8
 

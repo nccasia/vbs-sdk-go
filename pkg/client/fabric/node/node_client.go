@@ -4,9 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"vbs-sdk-go/pkg/common/http"
-	"vbs-sdk-go/pkg/core/fabric/base"
-	encryptutil "vbs-sdk-go/pkg/util/encryptutils"
+
+	"github.com/nccasia/vbs-sdk-go/pkg/common/http"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
+	encryptutil "github.com/nccasia/vbs-sdk-go/pkg/util/encryptutils"
 
 	"github.com/pkg/errors"
 	"github.com/wonderivan/logger"

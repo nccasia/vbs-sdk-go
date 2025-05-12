@@ -1,7 +1,7 @@
 package config
 
 import (
-	"vbs-sdk-go/pkg/core/fabric/base"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
 )
 
 type CertInfo struct {

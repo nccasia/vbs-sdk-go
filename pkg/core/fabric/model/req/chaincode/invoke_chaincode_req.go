@@ -1,6 +1,6 @@
 package chaincode
 
-import "vbs-sdk-go/pkg/core/fabric/base"
+import "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
 
 type InvokeChaincodeReqData struct {
 	base.BaseReqModel

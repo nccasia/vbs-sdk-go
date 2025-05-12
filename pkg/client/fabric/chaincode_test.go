@@ -3,8 +3,9 @@ package fabric
 import (
 	"fmt"
 	"testing"
-	"vbs-sdk-go/pkg/core/config"
-	"vbs-sdk-go/pkg/core/fabric/model/req/chaincode"
+
+	"github.com/nccasia/vbs-sdk-go/pkg/core/config"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/chaincode"
 )
 
 func TestFabricClient_QueryChaincode(t *testing.T) {
