@@ -2,6 +2,8 @@ package http
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/wonderivan/logger"
@@ -27,20 +29,18 @@ func SendPost(dataBytes []byte, url string) ([]byte, error) {
 	if response != nil && response.Body != nil {
 		defer response.Body.Close()
 	}
-	//Get the response message data from the response object and read it
-	allBytes := []byte{}
-	bytes := make([]byte, response.ContentLength)
-	i, _ := response.Body.Read(bytes)
-	allBytes = append(allBytes, bytes[:i]...)
 
-	for {
-		i, _ = response.Body.Read(bytes)
-		if i == 0 {
-			break
-		}
-		allBytes = append(allBytes, bytes[:i]...)
-
+	// Kiểm tra mã trạng thái HTTP
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d %s", response.StatusCode, response.Status)
 	}
+
+	// Đọc toàn bộ response body
+	allBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
 	logger.Debug("response message：", string(allBytes))
 	return allBytes, nil
 }
