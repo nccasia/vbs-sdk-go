@@ -8,7 +8,25 @@ import (
 	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/chaincode"
 )
 
-func TestFabricClient_QueryChaincode(t *testing.T) {
+func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
+	fabricClient := getFabricClient(t)
+
+	// args := []string{"37"}
+	args := []string{}
+	body := chaincode.QueryChaincodeReqBody{
+		UserID:        "tutest10",
+		ChaincodeName: "asset-transfer-basic",
+		FunctionName:  "GetAllAssets",
+		Args:          args,
+	}
+	res, err := fabricClient.QueryChaincode(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(res)
+}
+
+func TestFabricClient_QueryChaincode_GetOne(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	args := []string{"37"}
