@@ -5,17 +5,16 @@ import (
 	"testing"
 
 	"github.com/nccasia/vbs-sdk-go/pkg/core/config"
-	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/chaincode"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/chaincode"
 )
 
 func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
-	// args := []string{"37"}
 	args := []string{}
 	body := chaincode.QueryChaincodeReqBody{
-		UserID:        "tutest10",
-		ChaincodeName: "asset-transfer-basic",
+		UserID:        "tutest01",
+		ChaincodeName: "contract-testingapp1747220033738860",
 		FunctionName:  "GetAllAssets",
 		Args:          args,
 	}
@@ -29,10 +28,10 @@ func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
 func TestFabricClient_QueryChaincode_GetOne(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
-	args := []string{"37"}
+	args := []string{"tu001"}
 	body := chaincode.QueryChaincodeReqBody{
-		UserID:        "tutest10",
-		ChaincodeName: "asset-transfer-basic",
+		UserID:        "tutest01",
+		ChaincodeName: "contract-testingapp1747220033738860",
 		FunctionName:  "ReadAsset",
 		Args:          args,
 	}
@@ -46,10 +45,10 @@ func TestFabricClient_QueryChaincode_GetOne(t *testing.T) {
 func TestFabricClient_InvokeChaincode(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
-	args := []string{"tu005", "green", "31", "aba", "2000"}
+	args := []string{"tu001", "green", "31", "aba", "2000"}
 	body := chaincode.InvokeChaincodeReqBody{
-		UserID:        "tutest10",
-		ChaincodeName: "asset-transfer-basic",
+		UserID:        "tutest01",
+		ChaincodeName: "contract-testingapp1747220033738860",
 		FunctionName:  "CreateAsset",
 		Args:          args,
 	}

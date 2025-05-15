@@ -1,7 +1,9 @@
 package config
 
 import (
-	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
+	"github.com/nccasia/vbs-sdk-go/pkg/client/app"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/req"
 )
 
 type CertInfo struct {
@@ -52,36 +54,27 @@ func NewConfig(api, userCode, appCode, prk, mspDir string) (*Config, error) {
 
 func (c *Config) Init() error {
 	if !c.isInit {
-		// reqData := apptypes.AppInfoReqData{}
-		// reqData.Header = c.GetReqHeader()
+		reqData := req.AppInfoReqData{}
+		reqData.Header = c.GetReqHeader()
+		res, err := app.GetAppInfo(&reqData, c.nodeApi, "")
 
-		// res, err := app.GetAppInfo(&reqData, c.nodeApi, "")
-
-		// if err != nil {
-		// 	return err
-		// }
-
-		// if res.Header.Code != 0 {
-		// 	return errors.New("get app info failed ：" + res.Header.Msg)
-		// }
+		if err != nil {
+			return err
+		}
 
 		// c.app.AppType = res.Body.AppType
-
 		// c.app.CAType = enum.App_CaType(res.Body.CaType)
 		// c.app.AlgorithmType = enum.App_AlgorithmType(res.Body.AlgorithmType)
-
 		// if c.appCert.AppPublicCert == "" {
 		// 	c.appCert.AppPublicCert = GetGatewayPublicKey(c.app.AlgorithmType)
 		// }
-
 		// if c.appCert.AppPublicCert == "" {
 		// 	return errors.New("gateway public key not setting")
 		// }
 
-		c.app.MspId = "Org1MSP"
-		// c.app.MspId = res.Body.MspId
-		// c.app.ChannelId = res.Body.ChannelId
-		// c.app.Version = res.Body.FabricVersion
+		c.app.MspId = res.Body.MspId
+		c.app.ChannelId = res.Body.ChannelId
+		c.app.Version = res.Body.FabricVersion
 		c.isInit = true
 	}
 

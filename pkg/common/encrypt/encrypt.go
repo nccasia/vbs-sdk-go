@@ -1,4 +1,4 @@
-package encryptutil
+package encrypt
 
 import (
 	"crypto/ecdsa"
