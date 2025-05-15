@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/nccasia/vbs-sdk-go/pkg/common/encrypt"
 	"github.com/nccasia/vbs-sdk-go/pkg/common/http"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
-	encryptutil "github.com/nccasia/vbs-sdk-go/pkg/util/encryptutils"
 
 	"github.com/pkg/errors"
 	"github.com/wonderivan/logger"
@@ -33,7 +33,7 @@ func NewNodeCli(url string, pri string) *NodeClient {
 }
 
 func (c *NodeClient) Sign(data string) (string, error) {
-	mac, err := encryptutil.SignData([]byte(c.pri), []byte(data))
+	mac, err := encrypt.SignData([]byte(c.pri), []byte(data))
 	if err != nil {
 		return "", errors.WithMessage(err, "exception in signature")
 	}
