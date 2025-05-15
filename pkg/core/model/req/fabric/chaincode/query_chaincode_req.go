@@ -1,20 +1,20 @@
 package chaincode
 
-import "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
+import "github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
 
-type InvokeChaincodeReqData struct {
+type QueryChaincodeReqData struct {
 	base.BaseReqModel
-	Body InvokeChaincodeReqBody `json:"body"`
+	Body QueryChaincodeReqBody `json:"body"`
 }
 
-type InvokeChaincodeReqBody struct {
-	UserID        string   `json:"user_id"`
+type QueryChaincodeReqBody struct {
 	ChaincodeName string   `json:"chaincode_name"`
 	FunctionName  string   `json:"function_name"`
+	UserID        string   `json:"user_id"`
 	Args          []string `json:"args"`
 }
 
-func (f *InvokeChaincodeReqData) GetEncryptionValue() string {
+func (f *QueryChaincodeReqData) GetEncryptionValue() string {
 	fp := f.GetBaseEncryptionValue()
 
 	fp = fp + f.Body.ChaincodeName

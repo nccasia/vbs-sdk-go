@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/nccasia/vbs-sdk-go/pkg/common/http"
-	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/base"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
 	encryptutil "github.com/nccasia/vbs-sdk-go/pkg/util/encryptutils"
 
 	"github.com/pkg/errors"

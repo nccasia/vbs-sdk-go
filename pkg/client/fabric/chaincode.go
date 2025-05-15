@@ -1,8 +1,8 @@
 package fabric
 
 import (
-	ccreq "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/chaincode"
-	ccres "github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/res/chaincode"
+	ccreq "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/chaincode"
+	ccres "github.com/nccasia/vbs-sdk-go/pkg/core/model/res/fabric/chaincode"
 
 	"github.com/pkg/errors"
 )

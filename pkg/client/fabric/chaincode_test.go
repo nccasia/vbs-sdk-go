@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/nccasia/vbs-sdk-go/pkg/core/config"
-	"github.com/nccasia/vbs-sdk-go/pkg/core/fabric/model/req/chaincode"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/chaincode"
 )
 
 func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
@@ -15,7 +15,7 @@ func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
 	args := []string{}
 	body := chaincode.QueryChaincodeReqBody{
 		UserID:        "tutest10",
-		ChaincodeName: "asset-transfer-basic",
+		ChaincodeName: "contract-testingapp1747220033738860",
 		FunctionName:  "GetAllAssets",
 		Args:          args,
 	}
