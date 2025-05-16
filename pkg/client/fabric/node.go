@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	GetTransInfo = "node/transaction"
-	GetBlockInfo = "node/block"
+	GetTransInfo  = "node/transaction"
+	GetBlockInfo  = "node/block"
+	GetLedgerInfo = "node/ledger"
 )
 
 func (c *FabricClient) GetTransInfo(body nodereq.TransReqDataBody) (*noderes.TransactionResData, error) {
@@ -36,5 +37,19 @@ func (c *FabricClient) GetBlockInfo(body nodereq.BlockReqDataBody) (*noderes.Blo
 	if err != nil {
 		return nil, errors.WithMessagef(err, "call %s has error", GetBlockInfo)
 	}
+	return res, nil
+}
+
+func (c *FabricClient) GetLedgerInfo() (*noderes.LedgerResData, error) {
+	req := &nodereq.LedgerReqData{}
+	req.Header = c.GetHeader()
+
+	res := &noderes.LedgerResData{}
+
+	err := c.Call(GetLedgerInfo, req, res)
+	if err != nil {
+		return nil, errors.WithMessagef(err, "call %s has error", GetLedgerInfo)
+	}
+
 	return res, nil
 }
