@@ -23,11 +23,11 @@ func TestFabricClient_GetTransInfo(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_GetBlockInfo(t *testing.T) {
+func TestFabricClient_GetBlockInfo_ByBlockNumber(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	tx := req.BlockReqDataBody{
-		BlockNumber: 1,
+		BlockNumber: 32,
 	}
 
 	res, err := fabricClient.GetBlockInfo(tx)
@@ -35,5 +35,30 @@ func TestFabricClient_GetBlockInfo(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	fmt.Println(res)
+}
+
+func TestFabricClient_GetBlockInfo_BlockHash(t *testing.T) {
+	fabricClient := getFabricClient(t)
+
+	tx := req.BlockReqDataBody{
+		BlockHash: "b7fd57b34198a9a3a58617e2cf1da02d9ed9185ca37e77b969998c4ee925d2e3",
+	}
+
+	res, err := fabricClient.GetBlockInfo(tx)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Println(res)
+}
+
+func TestFabricClient_GetLedgerInfo(t *testing.T) {
+	fabricClient := getFabricClient(t)
+	res, err := fabricClient.GetLedgerInfo()
+
+	if err != nil {
+		t.Fatal(err)
+	}
 	fmt.Println(res)
 }
