@@ -12,8 +12,22 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/constants"
 )
+
+type pkcs8Info struct {
+	Version             int
+	PrivateKeyAlgorithm []asn1.ObjectIdentifier
+	PrivateKey          []byte
+}
+
+type ecPrivateKey struct {
+	Version       int
+	PrivateKey    []byte
+	NamedCurveOID asn1.ObjectIdentifier `asn1:"optional,explicit,tag:0"`
+	PublicKey     asn1.BitString        `asn1:"optional,explicit,tag:1"`
+}
 
 var (
 	// curveHalfOrders contains the precomputed curve group orders halved.
@@ -21,28 +35,27 @@ var (
 	// curve group order halved. We accept only low-S signatures.
 	// They are precomputed for efficiency reasons.
 	curveHalfOrders = map[elliptic.Curve]*big.Int{
-		elliptic.P224():  new(big.Int).Rsh(elliptic.P224().Params().N, 1),
-		elliptic.P256():  new(big.Int).Rsh(elliptic.P256().Params().N, 1),
-		elliptic.P384():  new(big.Int).Rsh(elliptic.P384().Params().N, 1),
-		elliptic.P521():  new(big.Int).Rsh(elliptic.P521().Params().N, 1),
-		secp256k1.S256(): new(big.Int).Rsh(secp256k1.S256().Params().N, 1),
+		elliptic.P224(): new(big.Int).Rsh(elliptic.P224().Params().N, 1),
+		elliptic.P256(): new(big.Int).Rsh(elliptic.P256().Params().N, 1),
+		elliptic.P384(): new(big.Int).Rsh(elliptic.P384().Params().N, 1),
+		elliptic.P521(): new(big.Int).Rsh(elliptic.P521().Params().N, 1),
+		crypto.S256():   new(big.Int).Rsh(crypto.S256().Params().N, 1),
 	}
 )
 
-func SignData(priKeyPem, digest []byte) ([]byte, error) {
-	priKey, err := LoadPrivateKeyFromPEM(priKeyPem)
+func SignData(encryptType string, priKeyPem, digest []byte) ([]byte, error) {
+	priKey, err := LoadPrivateKeyFromPEM(encryptType, priKeyPem)
 	if err != nil {
 		return nil, errors.New("could not parse private key: " + err.Error())
 	}
 
 	// Hash data by SHA-256
 	hash := sha256.Sum256(digest)
-
 	return SignECDSA(priKey, hash[:])
 }
 
 // LoadPrivateKeyFromPEM loads an ECDSA private key from PEM-encoded data.
-func LoadPrivateKeyFromPEM(pemData []byte) (*ecdsa.PrivateKey, error) {
+func LoadPrivateKeyFromPEM(encryptType string, pemData []byte) (*ecdsa.PrivateKey, error) {
 	// Decode the PEM block
 	block, _ := pem.Decode(pemData)
 	if block == nil {
@@ -54,19 +67,32 @@ func LoadPrivateKeyFromPEM(pemData []byte) (*ecdsa.PrivateKey, error) {
 		return nil, fmt.Errorf("invalid PEM block type: %s, expected PRIVATE KEY", block.Type)
 	}
 
-	// Parse the private key from DER-encoded data
-	priv, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse private key: %v", err)
-	}
+	if encryptType == constants.Secp256k1 {
+		var pkcs8Key pkcs8Info
+		if _, err := asn1.Unmarshal(block.Bytes, &pkcs8Key); err != nil {
+			return nil, err
+		}
+		var privateKey ecPrivateKey
+		if _, err := asn1.Unmarshal(pkcs8Key.PrivateKey, &privateKey); err != nil {
+			return nil, err
+		}
+		return crypto.ToECDSA(privateKey.PrivateKey)
+	} else {
+		// Parse the private key from DER-encoded data
+		priv, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 
-	// Ensure the parsed key is an ECDSA private key
-	ecdsaPriv, ok := priv.(*ecdsa.PrivateKey)
-	if !ok {
-		return nil, fmt.Errorf("private key is not an ECDSA key")
-	}
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse private key: %v", err)
+		}
 
-	return ecdsaPriv, nil
+		// Ensure the parsed key is an ECDSA private key
+		ecdsaPriv, ok := priv.(*ecdsa.PrivateKey)
+		if !ok {
+			return nil, fmt.Errorf("private key is not an ECDSA key")
+		}
+
+		return ecdsaPriv, nil
+	}
 }
 
 func SignECDSA(k *ecdsa.PrivateKey, digest []byte) (signature []byte, err error) {
