@@ -13,7 +13,7 @@ func TestFiscoBcosClient_QueryContract(t *testing.T) {
 	args := []string{}
 	body := req.QueryContractReqBody{
 		UserID:          "tutest04",
-		ContractAddress: "0xb1F8731f406A9Bd4C9f70be544032Ca58C9B2c46",
+		ContractAddress: "0xC8eAd4B26b2c6Ac14c9fD90d9684c9Bc2cC40085",
 		FunctionName:    "get",
 		Args:            args,
 	}
@@ -31,7 +31,7 @@ func TestFiscoBcosClient_InvokeContract(t *testing.T) {
 	args := []string{"Hello, world"}
 	body := req.InvokeContractReqBody{
 		UserID:          "tutest04",
-		ContractAddress: "0xb1F8731f406A9Bd4C9f70be544032Ca58C9B2c46",
+		ContractAddress: "0xC8eAd4B26b2c6Ac14c9fD90d9684c9Bc2cC40085",
 		FunctionName:    "set",
 		Args:            args,
 	}
