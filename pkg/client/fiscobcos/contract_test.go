@@ -28,7 +28,7 @@ func TestFiscoBcosClient_QueryContract(t *testing.T) {
 func TestFiscoBcosClient_InvokeContract(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
-	args := []string{"Hello, world"}
+	args := []string{"Hello, World!!!!!!!!"}
 	body := req.InvokeContractReqBody{
 		UserID:          "tutest04",
 		ContractAddress: "0xC8eAd4B26b2c6Ac14c9fD90d9684c9Bc2cC40085",
