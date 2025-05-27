@@ -7,7 +7,6 @@ import (
 
 	"github.com/nccasia/vbs-sdk-go/pkg/common/encrypt"
 	"github.com/nccasia/vbs-sdk-go/pkg/common/http"
-	"github.com/nccasia/vbs-sdk-go/pkg/core/constants"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
 
 	"github.com/pkg/errors"
@@ -34,7 +33,7 @@ func NewNodeCli(url string, pri string) *NodeClient {
 }
 
 func (c *NodeClient) Sign(data string) (string, error) {
-	mac, err := encrypt.SignData(constants.Prime256v1, []byte(c.pri), []byte(data))
+	mac, err := encrypt.SignData([]byte(c.pri), []byte(data))
 	if err != nil {
 		return "", errors.WithMessage(err, "exception in signature")
 	}

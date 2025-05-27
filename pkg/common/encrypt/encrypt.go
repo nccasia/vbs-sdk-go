@@ -30,6 +30,11 @@ type ecPrivateKey struct {
 }
 
 var (
+	oidNamedCurveP256 = asn1.ObjectIdentifier{1, 2, 840, 10045, 3, 1, 7}
+	oidNamedCurveS256 = asn1.ObjectIdentifier{1, 3, 132, 0, 10}
+)
+
+var (
 	// curveHalfOrders contains the precomputed curve group orders halved.
 	// It is used to ensure that signature' S value is lower or equal to the
 	// curve group order halved. We accept only low-S signatures.
@@ -43,8 +48,8 @@ var (
 	}
 )
 
-func SignData(encryptType string, priKeyPem, digest []byte) ([]byte, error) {
-	priKey, err := LoadPrivateKeyFromPEM(encryptType, priKeyPem)
+func SignData(priKeyPem, digest []byte) ([]byte, error) {
+	priKey, err := LoadPrivateKeyFromPEM(priKeyPem)
 	if err != nil {
 		return nil, errors.New("could not parse private key: " + err.Error())
 	}
@@ -55,7 +60,11 @@ func SignData(encryptType string, priKeyPem, digest []byte) ([]byte, error) {
 }
 
 // LoadPrivateKeyFromPEM loads an ECDSA private key from PEM-encoded data.
-func LoadPrivateKeyFromPEM(encryptType string, pemData []byte) (*ecdsa.PrivateKey, error) {
+func LoadPrivateKeyFromPEM(pemData []byte) (*ecdsa.PrivateKey, error) {
+	encryptType, err := DetectEncryptTypeFromPEM(pemData)
+	if err != nil {
+		return nil, fmt.Errorf("failed to detect encrypt type PEM block")
+	}
 	// Decode the PEM block
 	block, _ := pem.Decode(pemData)
 	if block == nil {
@@ -92,6 +101,35 @@ func LoadPrivateKeyFromPEM(encryptType string, pemData []byte) (*ecdsa.PrivateKe
 		}
 
 		return ecdsaPriv, nil
+	}
+}
+
+func DetectEncryptTypeFromPEM(pemData []byte) (string, error) {
+	block, _ := pem.Decode(pemData)
+	if block == nil || block.Type != "PRIVATE KEY" {
+		return "", errors.New("invalid PEM block")
+	}
+
+	var pkcs8 pkcs8Info
+	_, err := asn1.Unmarshal(block.Bytes, &pkcs8)
+	if err != nil {
+		return "", fmt.Errorf("failed to unmarshal PKCS#8: %v", err)
+	}
+
+	// The second OID in PrivateKeyAlgorithm is the named curve
+	if len(pkcs8.PrivateKeyAlgorithm) < 2 {
+		return "", errors.New("missing curve OID in key")
+	}
+
+	oid := pkcs8.PrivateKeyAlgorithm[1].String()
+	fmt.Println("Detected OID: ", oid)
+	switch oid {
+	case oidNamedCurveP256.String():
+		return constants.Prime256v1, nil
+	case oidNamedCurveS256.String():
+		return constants.Secp256k1, nil
+	default:
+		return "unknown (" + oid + ")", nil
 	}
 }
 
