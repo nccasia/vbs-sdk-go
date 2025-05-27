@@ -8,7 +8,6 @@ import (
 	"github.com/nccasia/vbs-sdk-go/pkg/common/encrypt"
 	"github.com/nccasia/vbs-sdk-go/pkg/common/http"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/config"
-	"github.com/nccasia/vbs-sdk-go/pkg/core/constants"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
 	"github.com/pkg/errors"
 	"github.com/wonderivan/logger"
@@ -34,7 +33,7 @@ func (c *FiscoBcosClient) GetHeader() base.ReqHeader {
 }
 
 func (c *FiscoBcosClient) Sign(data string) (string, error) {
-	mac, err := encrypt.SignData(constants.Secp256k1, []byte(c.Config.GetAppCert().UserAppPrivateCert), []byte(data))
+	mac, err := encrypt.SignData([]byte(c.Config.GetAppCert().UserAppPrivateCert), []byte(data))
 	if err != nil {
 		return "", errors.WithMessage(err, "exception in signature")
 	}
