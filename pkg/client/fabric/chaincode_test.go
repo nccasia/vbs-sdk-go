@@ -12,13 +12,13 @@ func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	args := []string{}
-	body := chaincode.QueryChaincodeReqBody{
-		UserID:        "tutest01",
-		ChaincodeName: "contract-testingapp1747220033738860",
+	body := chaincode.QueryChaincodeReq{
+		UserID:        "tutest004",
+		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
 		FunctionName:  "GetAllAssets",
 		Args:          args,
 	}
-	res, err := fabricClient.QueryChaincode(body)
+	res, err := fabricClient.QueryChaincode(body, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,32 +28,14 @@ func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
 func TestFabricClient_QueryChaincode_GetOne(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
-	args := []string{"tu001"}
-	body := chaincode.QueryChaincodeReqBody{
-		UserID:        "tutest01",
-		ChaincodeName: "contract-testingapp1747220033738860",
+	args := []string{"tu00011"}
+	body := chaincode.QueryChaincodeReq{
+		UserID:        "tutest003",
+		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
 		FunctionName:  "ReadAsset",
 		Args:          args,
 	}
-	res, err := fabricClient.QueryChaincode(body)
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Println(res)
-}
-
-func TestFabricClient_InvokeChaincode(t *testing.T) {
-	fabricClient := getFabricClient(t)
-
-	args := []string{"tu001", "green", "31", "aba", "2000"}
-	body := chaincode.InvokeChaincodeReqBody{
-		UserID:        "tutest01",
-		ChaincodeName: "contract-testingapp1747220033738860",
-		FunctionName:  "CreateAsset",
-		Args:          args,
-	}
-
-	res, err := fabricClient.InvokeChaincode(body)
+	res, err := fabricClient.QueryChaincode(body, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,8 +46,7 @@ func getFabricClient(t *testing.T) *FabricClient {
 	api := "http://localhost:8889"
 	userCode := "UserCode1"
 	appCode := "AppCode1"
-	privK := "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgLahbu+lO/KAIF+U7\nps0CHMAyoo+PVtt4GF5T1uXa6GugCgYIKoZIzj0DAQehRANCAATVwUfPrSVZR1/1\nGgfq5pOpohRyPq00Itd2sYCkOJ704yPFIpN7bMcmztQtHJVDh2I+CydXeIyYJ0Tp\ntUQBWUtr\n-----END PRIVATE KEY-----"
-
+	privK := "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgxONXM9QezTD7JvSs\ndfMuV64CD8b0jCa2qpc3qJDGjYagCgYIKoZIzj0DAQehRANCAATNAe5f9X2LLSCt\nFP2AFwzYL6dNRb6rckxSMfVd27mjYrKSPelRY/l5bIKLbAi1iXXcUoJie6mwnLdR\nWMl8wJYf\n-----END PRIVATE KEY-----\n"
 	mspDir := "C:\\test"
 
 	config, err := config.NewConfig(api, userCode, appCode, privK, mspDir)
@@ -80,4 +61,41 @@ func getFabricClient(t *testing.T) *FabricClient {
 	}
 
 	return fabricClient
+}
+
+func TestFabricClient_PrepareProposal(t *testing.T) {
+	fabricClient := getFabricClient(t)
+
+	args := []string{"tu0009", "green", "31", "aba", "20000"}
+	body := chaincode.InvokeChaincodeReqBody{
+		UserID:        "tutest004",
+		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
+		FunctionName:  "CreateAsset",
+		Args:          args,
+	}
+
+	res, err := fabricClient.PrepareProposal(body, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(res)
+}
+
+func TestFabricClient_InvokeChaincode(t *testing.T) {
+	fabricClient := getFabricClient(t)
+
+	args := []string{"tu00013", "green", "31", "aba", "20000"}
+	body := chaincode.InvokeChaincodeReqBody{
+		UserID:        "tutest004",
+		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
+		FunctionName:  "CreateAsset",
+		Args:          args,
+	}
+
+	res, err := fabricClient.InvokeChaincode(body, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	fmt.Println(res)
 }

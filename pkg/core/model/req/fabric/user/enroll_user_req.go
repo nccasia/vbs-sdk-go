@@ -10,7 +10,7 @@ type UserEnrollReqData struct {
 type UserEnrollReqDataBody struct {
 	UserID string `json:"userId"`
 	Secret string `json:"secret"`
-	CSR    string `json:"csr"` // CSR in PEM format
+	CSR    string `json:"certificate_request"` // CSR in PEM format
 }
 
 func (f *UserEnrollReqData) GetEncryptionValue() string {

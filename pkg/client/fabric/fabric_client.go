@@ -2,22 +2,24 @@ package fabric
 
 import (
 	"github.com/nccasia/vbs-sdk-go/pkg/client/fabric/node"
+	"github.com/nccasia/vbs-sdk-go/pkg/common/keystore"
+	"github.com/nccasia/vbs-sdk-go/pkg/common/userstore"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/config"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/userdata"
 
 	"github.com/wonderivan/logger"
 )
 
 type FabricClient struct {
-	appInfo  config.AppInfo
-	userCode string
-
+	appInfo         config.AppInfo
+	userCode        string
 	nodeClients     map[string]*node.NodeClient
 	defaultNodeName string
-	// keyOpts         keystore.KeyStore
-	// userOpts        keystore.UserCertStore
+	keyOpts         keystore.KeyStore
+	userOpts        userstore.UserCertStore
 
-	// users map[string]*msp.UserData
+	users map[string]*userdata.UserData
 }
 
 func InitFabricClient(config *config.Config) (*FabricClient, error) {
@@ -32,16 +34,16 @@ func InitFabricClient(config *config.Config) (*FabricClient, error) {
 		appInfo:     config.GetAppInfo(),
 		userCode:    config.GetUserCode(),
 		nodeClients: make(map[string]*node.NodeClient),
-		// users:       make(map[string]*msp.UserData),
+		users:       make(map[string]*userdata.UserData),
 	}
 
-	// if fabricClient.keyOpts == nil {
-	// 	fabricClient.keyOpts = keystore.NewFileKeyStore(config.GetKSPath())
-	// }
+	if fabricClient.keyOpts == nil {
+		fabricClient.keyOpts = keystore.NewFileKeyStore(config.GetKSPath())
+	}
 
-	// if fabricClient.userOpts == nil {
-	// 	fabricClient.userOpts = keystore.NewUserCertStore(config.GetUSPath())
-	// }
+	if fabricClient.userOpts == nil {
+		fabricClient.userOpts = userstore.NewUserCertStore(config.GetUSPath())
+	}
 
 	if fabricClient.defaultNodeName == "" {
 		fabricClient.defaultNodeName = fabricClient.appInfo.MspId
@@ -58,6 +60,20 @@ func (c *FabricClient) GetHeader() base.ReqHeader {
 	}
 
 	return header
+}
+
+func (c *FabricClient) GetAppInfo() *config.AppInfo {
+	return &c.appInfo
+}
+
+func (c *FabricClient) newUser(userName string) *userdata.UserData {
+	user := &userdata.UserData{
+		UserName: userName,
+		AppCode:  c.appInfo.AppCode,
+		MspId:    c.appInfo.MspId,
+	}
+
+	return user
 }
 
 func (c *FabricClient) Call(method string, req base.ReqInterface, res base.ResInterface) error {

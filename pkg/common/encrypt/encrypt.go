@@ -6,33 +6,45 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/pem"
 	"errors"
 	"fmt"
 	"math/big"
 
+	"github.com/cloudflare/cfssl/csr"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/constants"
 )
-
-type pkcs8Info struct {
-	Version             int
-	PrivateKeyAlgorithm []asn1.ObjectIdentifier
-	PrivateKey          []byte
-}
-
-type ecPrivateKey struct {
-	Version       int
-	PrivateKey    []byte
-	NamedCurveOID asn1.ObjectIdentifier `asn1:"optional,explicit,tag:0"`
-	PublicKey     asn1.BitString        `asn1:"optional,explicit,tag:1"`
-}
 
 var (
 	oidNamedCurveP256 = asn1.ObjectIdentifier{1, 2, 840, 10045, 3, 1, 7}
 	oidNamedCurveS256 = asn1.ObjectIdentifier{1, 3, 132, 0, 10}
 )
+
+var oidPublicKeyECDSA = asn1.ObjectIdentifier{1, 2, 840, 10045, 2, 1}
+
+func oidFromNamedCurve(curve elliptic.Curve) (asn1.ObjectIdentifier, bool) {
+	fmt.Printf("CURVE %d", curve)
+	switch curve {
+	case elliptic.P256():
+		return oidNamedCurveP256, true
+	case crypto.S256():
+		return oidNamedCurveS256, true
+	}
+	return oidNamedCurveS256, true
+}
+
+func namedCurveFromOID(oid asn1.ObjectIdentifier) elliptic.Curve {
+	switch {
+	case oid.Equal(oidNamedCurveP256):
+		return elliptic.P256()
+	case oid.Equal(oidNamedCurveS256):
+		return crypto.S256()
+	}
+	return nil
+}
 
 var (
 	// curveHalfOrders contains the precomputed curve group orders halved.
@@ -102,6 +114,100 @@ func LoadPrivateKeyFromPEM(pemData []byte) (*ecdsa.PrivateKey, error) {
 
 		return ecdsaPriv, nil
 	}
+}
+
+func LoadPublicKeyFromPEM(encryptType string, pemData []byte) (*ecdsa.PublicKey, error) {
+	// Decode the PEM block
+	block, _ := pem.Decode(pemData)
+	if block == nil {
+		return nil, fmt.Errorf("failed to decode PEM block")
+	}
+
+	// Check the block type
+	if block.Type != "PUBLIC KEY" {
+		return nil, fmt.Errorf("invalid PEM block type: %s, expected PUBLIC KEY", block.Type)
+	}
+
+	if encryptType == constants.Secp256k1 {
+		var pkixPublicKey pkixPublicKey
+		if _, err := asn1.Unmarshal(block.Bytes, &pkixPublicKey); err != nil {
+			return nil, err
+		}
+
+		return crypto.UnmarshalPubkey(pkixPublicKey.BitString.Bytes)
+	} else {
+		// Parse the public key from DER-encoded data
+		pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse public key: %v", err)
+		}
+
+		// Ensure the parsed key is an ECDSA public key
+		ecdsaPub, ok := pub.(*ecdsa.PublicKey)
+		if !ok {
+			return nil, fmt.Errorf("public key is not an ECDSA key")
+		}
+
+		return ecdsaPub, nil
+	}
+}
+
+func LoadPublicKeyByCertPem(cert string) (*ecdsa.PublicKey, error) {
+
+	bl, _ := pem.Decode([]byte(cert))
+	if bl == nil {
+		return nil, errors.New("failed to decode PEM block from Certificate")
+	}
+
+	key, err := ParsePublicKeyByCert(bl.Bytes)
+
+	if err != nil {
+		return nil, errors.New("failed to parse private key from PrivateKey")
+	}
+
+	return key.(*ecdsa.PublicKey), nil
+}
+
+func ParsePublicKeyByCert(certBytes []byte) (pub interface{}, err error) {
+	var cert certificate
+	rest, err := asn1.Unmarshal(certBytes, &cert)
+	if err != nil {
+		return nil, err
+	}
+	if len(rest) > 0 {
+		return nil, asn1.SyntaxError{Msg: "trailing data"}
+	}
+
+	publicKey, err := parsePublicKey(&cert.TBSCertificate.PublicKey)
+
+	return publicKey, err
+}
+
+func parsePublicKey(keyData *publicKeyInfo) (interface{}, error) {
+	asn1Data := keyData.PublicKey.RightAlign()
+	paramsData := keyData.Algorithm.Parameters.FullBytes
+	namedCurveOID := new(asn1.ObjectIdentifier)
+	rest, err := asn1.Unmarshal(paramsData, namedCurveOID)
+	if err != nil {
+		return nil, err
+	}
+	if len(rest) != 0 {
+		return nil, errors.New("x509: trailing data after ECDSA parameters")
+	}
+	namedCurve := namedCurveFromOID(*namedCurveOID)
+	if namedCurve == nil {
+		return nil, errors.New("x509: unsupported elliptic curve")
+	}
+	x, y := elliptic.Unmarshal(namedCurve, asn1Data)
+	if x == nil {
+		return nil, errors.New("x509: failed to unmarshal elliptic curve point")
+	}
+	pub := &ecdsa.PublicKey{
+		Curve: namedCurve,
+		X:     x,
+		Y:     y,
+	}
+	return pub, nil
 }
 
 func DetectEncryptTypeFromPEM(pemData []byte) (string, error) {
@@ -175,4 +281,217 @@ func IsLowS(k *ecdsa.PublicKey, s *big.Int) (bool, error) {
 
 func marshalECDSASignature(r, s *big.Int) ([]byte, error) {
 	return asn1.Marshal(ECDSASignature{r, s})
+}
+
+// PrivateKeyToPEM converts the private key to PEM format.
+func PrivateKeyToPEM(k *ecdsa.PrivateKey) ([]byte, error) {
+	if k == nil {
+		return nil, errors.New("invalid ecdsa private key: nil")
+	}
+
+	// Get OID for the curve
+	oidNamedCurve, ok := oidFromNamedCurve(k.Curve)
+	if !ok {
+		return nil, errors.New("unknown elliptic curve")
+	}
+
+	// Pad private key
+	privateKeyBytes := k.D.Bytes()
+	paddedPrivateKey := make([]byte, (k.Curve.Params().N.BitLen()+7)/8)
+	copy(paddedPrivateKey[len(paddedPrivateKey)-len(privateKeyBytes):], privateKeyBytes)
+
+	// Serialize public key
+	var pubKeyBytes []byte
+	if k.Curve == elliptic.P256() {
+		// Use ECDH for P-256
+		priDchKey, err := k.ECDH()
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert to ECDH key: %v", err)
+		}
+		pubKeyBytes = priDchKey.PublicKey().Bytes()
+	} else {
+		// Manual serialization for other curves (e.g., secp256k1)
+		pubKeyBytes = make([]byte, 65)
+		pubKeyBytes[0] = 0x04
+		xBytes := k.PublicKey.X.Bytes()
+		yBytes := k.PublicKey.Y.Bytes()
+		copy(pubKeyBytes[1:33], xBytes[len(xBytes)-32:])
+		copy(pubKeyBytes[33:], yBytes[len(yBytes)-32:])
+	}
+
+	// Marshal to ASN.1 ECPrivateKey structure
+	asn1Bytes, err := asn1.Marshal(ecPrivateKey{
+		Version:       1,
+		PrivateKey:    paddedPrivateKey,
+		NamedCurveOID: oidNamedCurve,
+		PublicKey:     asn1.BitString{Bytes: pubKeyBytes},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal EC key to ASN.1: %v", err)
+	}
+
+	// Create PKCS#8 structure
+	pkcs8Key := pkcs8Info{
+		Version: 0,
+		PrivateKeyAlgorithm: []asn1.ObjectIdentifier{
+			oidPublicKeyECDSA,
+			oidNamedCurve,
+		},
+		PrivateKey: asn1Bytes,
+	}
+
+	// Marshal to PKCS#8
+	pkcs8Bytes, err := asn1.Marshal(pkcs8Key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal PKCS#8 key to ASN.1: %v", err)
+	}
+
+	// Encode to PEM
+	return pem.EncodeToMemory(&pem.Block{
+		Type:  "PRIVATE KEY",
+		Bytes: pkcs8Bytes,
+	}), nil
+}
+
+func MarshalPKIXPublicKey(pub *ecdsa.PublicKey) ([]byte, error) {
+	var publicKeyBytes []byte
+	var publicKeyAlgorithm pkix.AlgorithmIdentifier
+	var err error
+
+	if publicKeyBytes, publicKeyAlgorithm, err = marshalPublicKey(pub); err != nil {
+		return nil, err
+	}
+
+	pukix := pkixPublicKey{
+		Algo: publicKeyAlgorithm,
+		BitString: asn1.BitString{
+			Bytes:     publicKeyBytes,
+			BitLength: 8 * len(publicKeyBytes),
+		},
+	}
+
+	ret, _ := asn1.Marshal(pukix)
+	return ret, nil
+}
+
+// PublicKeyToPEM marshals a public key to the pem format
+func PublicKeyToPEM(k *ecdsa.PublicKey) ([]byte, error) {
+	PubASN1, err := MarshalPKIXPublicKey(k)
+	if err != nil {
+		return nil, err
+	}
+
+	return pem.EncodeToMemory(
+		&pem.Block{
+			Type:  "PUBLIC KEY",
+			Bytes: PubASN1,
+		},
+	), nil
+}
+
+func GeneratePrivateKey(encryptType string) (*ecdsa.PrivateKey, error) {
+	var priKey *ecdsa.PrivateKey
+	var err error
+	if encryptType == constants.Prime256v1 {
+		priKey, err = NewSecp256r1Key()
+	} else if encryptType == constants.Secp256k1 {
+		priKey, err = NewSecp256k1Key()
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	return priKey, nil
+}
+
+func marshalPublicKey(pub *ecdsa.PublicKey) (publicKeyBytes []byte, publicKeyAlgorithm pkix.AlgorithmIdentifier, err error) {
+	// Get OID for the curve
+	oid, ok := oidFromNamedCurve(pub.Curve)
+	if !ok {
+		return nil, pkix.AlgorithmIdentifier{}, errors.New("unsupported elliptic curve")
+	}
+
+	// Serialize public key
+	if pub.Curve == elliptic.P256() {
+		// Use ECDH for P-256
+		publicDchKey, err := pub.ECDH()
+		if err != nil {
+			return nil, pkix.AlgorithmIdentifier{}, fmt.Errorf("failed to convert to ECDH key: %v", err)
+		}
+		publicKeyBytes = publicDchKey.Bytes()
+	} else {
+		// Manual serialization for other curves (e.g., secp256k1)
+		publicKeyBytes = make([]byte, 65)
+		publicKeyBytes[0] = 0x04
+		xBytes := pub.X.Bytes()
+		yBytes := pub.Y.Bytes()
+		copy(publicKeyBytes[1:33], xBytes[len(xBytes)-32:])
+		copy(publicKeyBytes[33:], yBytes[len(yBytes)-32:])
+	}
+
+	// Set algorithm identifier
+	publicKeyAlgorithm.Algorithm = oidPublicKeyECDSA
+	var paramBytes []byte
+	paramBytes, err = asn1.Marshal(oid)
+	if err != nil {
+		return nil, pkix.AlgorithmIdentifier{}, fmt.Errorf("failed to marshal curve OID: %v", err)
+	}
+	publicKeyAlgorithm.Parameters.FullBytes = paramBytes
+
+	return publicKeyBytes, publicKeyAlgorithm, nil
+}
+
+func NewSecp256r1Key() (*ecdsa.PrivateKey, error) {
+	curve := elliptic.P256()
+	return ecdsa.GenerateKey(curve, rand.Reader)
+}
+
+func NewSecp256k1Key() (*ecdsa.PrivateKey, error) {
+	return ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+}
+
+func NewCertificateRequest(name string) *csr.CertificateRequest {
+	cr := &csr.CertificateRequest{}
+	cr.CN = name
+	cr.Names = append(cr.Names, csr.Name{
+		OU: "client",
+	})
+
+	return cr
+}
+
+func PivSKI(key *ecdsa.PrivateKey) []byte {
+	if key == nil {
+		return nil
+	}
+	// Marshall the public key
+	raw, _ := MarshalPKIXPublicKey(&key.PublicKey)
+
+	// Hash it
+	hash := sha256.New()
+	hash.Write(raw)
+	return hash.Sum(nil)
+}
+
+func PubSKI(key *ecdsa.PublicKey) []byte {
+	if key == nil {
+		return nil
+	}
+
+	// Marshall the public key
+	raw, _ := MarshalPKIXPublicKey(key)
+
+	// Hash it
+	hash := sha256.New()
+	hash.Write(raw)
+
+	return hash.Sum(nil)
+}
+
+func SHA256Hash(msg []byte) []byte {
+	h := sha256.New()
+	h.Write(msg)
+	hash := h.Sum(nil)
+
+	return hash
 }

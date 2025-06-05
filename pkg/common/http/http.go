@@ -32,6 +32,8 @@ func SendPost(dataBytes []byte, url string) ([]byte, error) {
 
 	// Kiểm tra mã trạng thái HTTP
 	if response.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(response.Body)
+		fmt.Printf("Error: %d %s, body: %s", response.StatusCode, response.Status, string(body))
 		return nil, fmt.Errorf("unexpected status code: %d %s", response.StatusCode, response.Status)
 	}
 

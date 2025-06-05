@@ -11,8 +11,8 @@ func TestFabricClient_EventRegister(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.RegisterEventReqBody{
-		ChainCode:  "asset-transfer-basic",
-		UserID:     "tutest8",
+		ChainCode:  "basic-transfer-contractapp1747897523507630",
+		UserID:     "tutest001",
 		EventKey:   "TransferAsset",
 		NotifyUrl:  "http://localhost:8888/api/event/chaincode-hook",
 		AttachArgs: "",
@@ -30,8 +30,8 @@ func TestFabricClient_BlockEventRegister(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.RegisterEventReqBody{
-		ChainCode:  "asset-transfer-basic",
-		UserID:     "tutest9",
+		ChainCode:  "basic-transfer-contractapp1747897523507630",
+		UserID:     "tutest001",
 		EventKey:   "",
 		NotifyUrl:  "http://localhost:8888/api/event/block-hook",
 		AttachArgs: "",
@@ -50,7 +50,7 @@ func TestFabricClient_EventQuery(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.QueryEventReqBody{
-		UserID: "tutest9",
+		UserID: "tutest001",
 	}
 	res, err := fabricClient.EventQuery(body)
 
@@ -64,8 +64,8 @@ func TestFabricClient_EventQuery(t *testing.T) {
 func TestFabricClient_EventRemove(t *testing.T) {
 	fabricClient := getFabricClient(t)
 	body := req.RemoveEventReqBody{
-		EventId: "c5ec763c-f852-4c11-821b-8702b03db2fb",
-		UserID:  "tutest9",
+		EventId: "9b7e0900-f671-4428-aec5-62889a110aa3",
+		UserID:  "tutest001",
 	}
 
 	res, err := fabricClient.EventRemove(body)
