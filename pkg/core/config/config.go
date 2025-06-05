@@ -1,6 +1,8 @@
 package config
 
 import (
+	"path"
+
 	"github.com/nccasia/vbs-sdk-go/pkg/client/app"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/req"
@@ -23,6 +25,10 @@ type Config struct {
 	appCert CertInfo
 	isInit  bool
 }
+
+const (
+	_KeyStore = "keystore"
+)
 
 type AppInfo struct {
 	AppCode string
@@ -104,4 +110,16 @@ func (c *Config) GetAppCert() CertInfo {
 
 func (c *Config) GetUserCode() string {
 	return c.user.UserCode
+}
+
+func (c *Config) GetKSPath() string {
+	return path.Join(c.mspDir, _KeyStore)
+}
+
+func (c *Config) GetUSPath() string {
+	return c.mspDir
+}
+
+func (c *AppInfo) GetChannelId() string {
+	return c.ChannelId
 }

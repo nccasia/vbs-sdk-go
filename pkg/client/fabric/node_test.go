@@ -11,7 +11,7 @@ func TestFabricClient_GetTransInfo(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	tx := req.TransReqDataBody{
-		TxId: "99c7091db7548fe00f43f7632f4a2ab4b28655b3ec612f5f288d3af57bbaaa6d",
+		TxId: "93833649b68e9d939f9ead9ae63af4ce853bad78f4302f8f07f50f78e80f3518",
 	}
 
 	res, err := fabricClient.GetTransInfo(tx)

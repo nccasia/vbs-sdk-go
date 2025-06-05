@@ -1,13 +1,22 @@
 package chaincode
 
-import "github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
+import (
+	"encoding/base64"
+
+	"github.com/nccasia/vbs-sdk-go/pkg/core/model/base"
+)
 
 type QueryChaincodeReqData struct {
 	base.BaseReqModel
-	Body QueryChaincodeReqBody `json:"body"`
+	Body SignedProposalBody `json:"body"`
 }
 
-type QueryChaincodeReqBody struct {
+type SignedProposalBody struct {
+	ChaincodeName       string `json:"chaincode_name"`
+	FunctionName        string `json:"function_name"`
+	SignedProposalBytes []byte `json:"signed_proposal_bytes"`
+}
+type QueryChaincodeReq struct {
 	ChaincodeName string   `json:"chaincode_name"`
 	FunctionName  string   `json:"function_name"`
 	UserID        string   `json:"user_id"`
@@ -19,11 +28,7 @@ func (f *QueryChaincodeReqData) GetEncryptionValue() string {
 
 	fp = fp + f.Body.ChaincodeName
 	fp = fp + f.Body.FunctionName
-	fp = fp + f.Body.UserID
-
-	for _, a := range f.Body.Args {
-		fp = fp + a
-	}
+	fp = fp + base64.StdEncoding.EncodeToString(f.Body.SignedProposalBytes)
 
 	return fp
 }

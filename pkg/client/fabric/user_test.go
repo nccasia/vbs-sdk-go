@@ -10,7 +10,7 @@ import (
 func TestFabricClient_RegisterUser(t *testing.T) {
 	fabricClient := getFabricClient(t)
 	body := req.UserRegisterReqDataBody{
-		UserID: "tutest01",
+		UserID: "tutest005",
 	}
 
 	res, err := fabricClient.RegisterUser(body)
@@ -22,12 +22,11 @@ func TestFabricClient_RegisterUser(t *testing.T) {
 }
 
 func TestFabricClient_EnrollUser(t *testing.T) {
-
 	fabricClient := getFabricClient(t)
 
 	body := req.UserEnrollReqDataBody{
-		UserID: "tutest01",
-		Secret: "qROPhyDfxsdH",
+		UserID: "tutest005",
+		Secret: "FziGKWQvjJMo",
 	}
 
 	res, err := fabricClient.EnrollUser(body)
