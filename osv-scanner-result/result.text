@@ -1,13 +1,8 @@
 Scanning dir .
-Scanning /mnt/c/wsl/vbs-sdk-go/ at commit c75d124d7b6f1bb341124b4a1c4ac8049c6becb1
-Scanned /mnt/c/wsl/vbs-sdk-go/go.mod file and found 18 packages
+Scanning /mnt/c/wsl/vbs-sdk-go/ at commit 2b4a3af878a303a7ab2d813c98bddf0543a03f95
+Scanned /mnt/c/wsl/vbs-sdk-go/go.mod file and found 16 packages
 +-------------------------------------+------+-----------+------------------+---------+--------+
 | OSV URL                             | CVSS | ECOSYSTEM | PACKAGE          | VERSION | SOURCE |
-+-------------------------------------+------+-----------+------------------+---------+--------+
-| https://osv.dev/GO-2025-3750        |      | Go        | stdlib           | 1.23.8  | go.mod |
-| https://osv.dev/GO-2025-3751        |      | Go        | stdlib           | 1.23.8  | go.mod |
-+-------------------------------------+------+-----------+------------------+---------+--------+
-| Uncalled vulnerabilities            |      |           |                  |         |        |
 +-------------------------------------+------+-----------+------------------+---------+--------+
 | https://osv.dev/GO-2025-3595        | 5.3  | Go        | golang.org/x/net | 0.36.0  | go.mod |
 | https://osv.dev/GHSA-vvgc-356p-c3xw |      |           |                  |         |        |
