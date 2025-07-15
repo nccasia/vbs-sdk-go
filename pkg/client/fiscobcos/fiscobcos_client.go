@@ -58,7 +58,7 @@ func (c *FiscoBcosClient) Call(method string, req base.ReqInterface, res base.Re
 	resBytes, err := http.SendPost(reqBytes, url)
 	if err != nil {
 		logger.Error("gateway interface call failed：", err)
-		return errors.WithMessage(err, "send post has error")
+		return err
 	}
 
 	err = json.Unmarshal(resBytes, res)

@@ -28,7 +28,7 @@ func (c *FabricClient) RegisterUser(body userreq.UserRegisterReqDataBody) (*user
 
 	err := c.Call(RegisterUser, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", RegisterUser)
+		return nil, err
 	}
 
 	return res, nil

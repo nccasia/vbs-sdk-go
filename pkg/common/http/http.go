@@ -2,6 +2,7 @@ package http
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -34,7 +35,7 @@ func SendPost(dataBytes []byte, url string) ([]byte, error) {
 	if response.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(response.Body)
 		fmt.Printf("Error: %d %s, body: %s", response.StatusCode, response.Status, string(body))
-		return nil, fmt.Errorf("unexpected status code: %d %s", response.StatusCode, response.Status)
+		return nil, errors.New(string(body))
 	}
 
 	// Đọc toàn bộ response body
