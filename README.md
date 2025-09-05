@@ -191,8 +191,8 @@ fmt.Printf("Invoke result: %+v\n", res)
 ## Hướng dẫn lấy thông tin cấu hình
 
 ### Lấy userCode, appCode và privateKey
-1. Đăng nhập vào trang **Quản lý Node phân quyền VBSN**
-2. Vào mục **Chứng chỉ của tôi**
+1. Đăng nhập vào trang **VBSN**
+2. Vào mục **Quản lý Node phân quyền** -> **Chứng chỉ của tôi**
 3. Lấy `userCode` và `appCode` từ thông tin tài khoản
 4. Thực hiện **tải file keypair** của dự án xuống để lấy `privateKey`
 
