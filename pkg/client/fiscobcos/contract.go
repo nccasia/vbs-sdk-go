@@ -9,6 +9,9 @@ import (
 const (
 	QueryContract  = "contracts/query"
 	InvokeContract = "contracts/invoke"
+
+	// Error message constants
+	ErrCallHasError = "call %s has error"
 )
 
 func (c *FiscoBcosClient) QueryContract(body ctreq.QueryContractReqBody) (*ctres.QueryContractResData, error) {
@@ -20,7 +23,7 @@ func (c *FiscoBcosClient) QueryContract(body ctreq.QueryContractReqBody) (*ctres
 
 	err := c.Call(QueryContract, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", QueryContract)
+		return nil, errors.WithMessagef(err, ErrCallHasError, QueryContract)
 	}
 
 	return res, nil
@@ -35,7 +38,7 @@ func (c *FiscoBcosClient) InvokeContract(body ctreq.InvokeContractReqBody) (*ctr
 
 	err := c.Call(InvokeContract, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", InvokeContract)
+		return nil, errors.WithMessagef(err, ErrCallHasError, InvokeContract)
 	}
 
 	return res, nil

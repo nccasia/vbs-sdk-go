@@ -21,7 +21,7 @@ func (c *FiscoBcosClient) GetTransInfo(body nodereq.TransInfoReqDataBody) (*node
 
 	err := c.Call(GetTransInfo, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", GetTransInfo)
+		return nil, errors.WithMessagef(err, ErrCallHasError, GetTransInfo)
 	}
 	return res, nil
 }
@@ -35,7 +35,7 @@ func (c *FiscoBcosClient) GetBlockInfo(body nodereq.BlockReqDataBody) (*noderes.
 
 	err := c.Call(GetBlockInfo, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", GetBlockInfo)
+		return nil, errors.WithMessagef(err, ErrCallHasError, GetBlockInfo)
 	}
 	return res, nil
 }
@@ -48,7 +48,7 @@ func (c *FiscoBcosClient) GetSystemInfo() (*noderes.SystemResData, error) {
 
 	err := c.Call(GetSystemInfo, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", GetSystemInfo)
+		return nil, errors.WithMessagef(err, ErrCallHasError, GetSystemInfo)
 	}
 
 	return res, nil

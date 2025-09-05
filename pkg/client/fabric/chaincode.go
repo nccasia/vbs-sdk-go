@@ -16,6 +16,11 @@ const (
 	InvokeChaincode = "chaincode/invoke"
 	PrepareProposal = "chaincode/proposal/prepare"
 	SubmitProposal  = "chaincode/proposal/submit"
+
+	// Error message constants
+	ErrUserLoadFailed               = "user [%s] load failed"
+	ErrFailedToCreateSignedProposal = "failed to create signed proposal"
+	ErrCallHasError                 = "call %s has error"
 )
 
 func (c *FabricClient) QueryChaincode(body ccreq.QueryChaincodeReq, user *userdata.UserData) (*ccres.QueryChaincodeResData, error) {
@@ -23,7 +28,7 @@ func (c *FabricClient) QueryChaincode(body ccreq.QueryChaincodeReq, user *userda
 	if user == nil {
 		user, err = c.LoadUser(body.UserID)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "user [%s] load failed", body.UserID)
+			return nil, errors.WithMessagef(err, ErrUserLoadFailed, body.UserID)
 		}
 	}
 
@@ -33,7 +38,7 @@ func (c *FabricClient) QueryChaincode(body ccreq.QueryChaincodeReq, user *userda
 
 	signedProposal, err := proposal.CreateSignedProposal(channelId, body.ChaincodeName, body.FunctionName, body.Args, user)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "failed to create signed proposal")
+		return nil, errors.WithMessagef(err, ErrFailedToCreateSignedProposal)
 	}
 	fmt.Printf("TxId: %s\n", signedProposal.TxId)
 
@@ -52,7 +57,7 @@ func (c *FabricClient) QueryChaincode(body ccreq.QueryChaincodeReq, user *userda
 
 	err = c.Call(QueryChaincode, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", QueryChaincode)
+		return nil, errors.WithMessagef(err, ErrCallHasError, QueryChaincode)
 	}
 
 	return res, nil
@@ -63,7 +68,7 @@ func (c *FabricClient) PrepareProposal(body ccreq.InvokeChaincodeReqBody, user *
 	if user == nil {
 		user, err = c.LoadUser(body.UserID)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "user [%s] load failed", body.UserID)
+			return nil, errors.WithMessagef(err, ErrUserLoadFailed, body.UserID)
 		}
 	}
 
@@ -73,7 +78,7 @@ func (c *FabricClient) PrepareProposal(body ccreq.InvokeChaincodeReqBody, user *
 
 	signedProposal, err := proposal.CreateSignedProposal(channelId, body.ChaincodeName, body.FunctionName, body.Args, user)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "failed to create signed proposal")
+		return nil, errors.WithMessagef(err, ErrFailedToCreateSignedProposal)
 	}
 	fmt.Printf("TxId: %s\n", signedProposal.TxId)
 
@@ -86,7 +91,7 @@ func (c *FabricClient) PrepareProposal(body ccreq.InvokeChaincodeReqBody, user *
 	res := &ccres.PrepareProposalResData{}
 	err = c.Call(PrepareProposal, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", PrepareProposal)
+		return nil, errors.WithMessagef(err, ErrCallHasError, PrepareProposal)
 	}
 
 	res.Body.TxID = signedProposal.TxId
@@ -98,7 +103,7 @@ func (c *FabricClient) InvokeChaincode(body ccreq.InvokeChaincodeReqBody, user *
 	if user == nil {
 		user, err = c.LoadUser(body.UserID)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "user [%s] load failed", body.UserID)
+			return nil, errors.WithMessagef(err, ErrUserLoadFailed, body.UserID)
 		}
 	}
 
@@ -114,7 +119,7 @@ func (c *FabricClient) InvokeChaincode(body ccreq.InvokeChaincodeReqBody, user *
 
 	signedPayloadBytes, err := proposal.SignPayload(prepareProposal.Body.PayloadBytes, user.PrivateKey)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "failed to create signed proposal")
+		return nil, errors.WithMessagef(err, ErrFailedToCreateSignedProposal)
 	}
 
 	req := &ccreq.SubmitProposalReqData{}
@@ -130,7 +135,7 @@ func (c *FabricClient) InvokeChaincode(body ccreq.InvokeChaincodeReqBody, user *
 	res := &ccres.InvokeChaincodeResData{}
 	err = c.Call(SubmitProposal, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", SubmitProposal)
+		return nil, errors.WithMessagef(err, ErrCallHasError, SubmitProposal)
 	}
 
 	return res, nil

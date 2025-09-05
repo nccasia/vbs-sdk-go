@@ -7,7 +7,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fiscobcos/user"
 )
 
-func TestFiscoBcosClient_RegisterUser(t *testing.T) {
+func TestFiscoBcosClientRegisterUser(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	body := req.UserRegisterReqDataBody{
@@ -22,7 +22,7 @@ func TestFiscoBcosClient_RegisterUser(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_EnrollUser(t *testing.T) {
+func TestFiscoBcosClientEnrollUser(t *testing.T) {
 	fabricClient := getFiscoBcosClient(t)
 
 	body := req.UserEnrollReqDataBody{

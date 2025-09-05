@@ -8,7 +8,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fiscobcos/node"
 )
 
-func TestFiscoBcosClient_GetTransInfo(t *testing.T) {
+func TestFiscoBcosClientGetTransInfo(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	body := req.TransInfoReqDataBody{
@@ -23,7 +23,7 @@ func TestFiscoBcosClient_GetTransInfo(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFiscoBcosClient_GetBlockInfo_ByBlockNumber(t *testing.T) {
+func TestFiscoBcosClientGetBlockInfoByBlockNumber(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	body := req.BlockReqDataBody{
@@ -38,7 +38,7 @@ func TestFiscoBcosClient_GetBlockInfo_ByBlockNumber(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFiscoBcosClient_GetSystemInfo(t *testing.T) {
+func TestFiscoBcosClientGetSystemInfo(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 	res, err := fiscobcosClient.GetSystemInfo()
 

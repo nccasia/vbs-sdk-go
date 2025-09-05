@@ -23,7 +23,7 @@ func (c *FiscoBcosClient) EventRegister(body eventreq.RegisterEventReqBody) (*ev
 
 	err := c.Call(EventRegister, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", EventRegister)
+		return nil, errors.WithMessagef(err, ErrCallHasError, EventRegister)
 	}
 	return res, nil
 }
@@ -37,7 +37,7 @@ func (c *FiscoBcosClient) BlockEventRegister(body eventreq.RegisterEventReqBody)
 
 	err := c.Call(BlockEventRegister, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", BlockEventRegister)
+		return nil, errors.WithMessagef(err, ErrCallHasError, BlockEventRegister)
 	}
 	return res, nil
 }
@@ -51,7 +51,7 @@ func (c *FiscoBcosClient) EventQuery(body eventreq.QueryEventReqBody) (*eventres
 
 	err := c.Call(EventQuery, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", EventQuery)
+		return nil, errors.WithMessagef(err, ErrCallHasError, EventQuery)
 	}
 	return res, nil
 }
@@ -66,7 +66,7 @@ func (c *FiscoBcosClient) EventRemove(body eventreq.RemoveEventReqBody) (*eventr
 	err := c.Call(EventRemove, req, res)
 
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", EventRemove)
+		return nil, errors.WithMessagef(err, ErrCallHasError, EventRemove)
 	}
 	return res, nil
 }

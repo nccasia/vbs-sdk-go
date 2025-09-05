@@ -7,7 +7,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/user"
 )
 
-func TestFabricClient_RegisterUser(t *testing.T) {
+func TestFabricClientRegisterUser(t *testing.T) {
 	fabricClient := getFabricClient(t)
 	body := req.UserRegisterReqDataBody{
 		UserID: "tutest005",
@@ -21,7 +21,7 @@ func TestFabricClient_RegisterUser(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_EnrollUser(t *testing.T) {
+func TestFabricClientEnrollUser(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.UserEnrollReqDataBody{

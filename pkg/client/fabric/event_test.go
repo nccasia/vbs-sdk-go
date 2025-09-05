@@ -7,7 +7,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/event"
 )
 
-func TestFabricClient_EventRegister(t *testing.T) {
+func TestFabricClientEventRegister(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.RegisterEventReqBody{
@@ -26,7 +26,7 @@ func TestFabricClient_EventRegister(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_BlockEventRegister(t *testing.T) {
+func TestFabricClientBlockEventRegister(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.RegisterEventReqBody{
@@ -46,7 +46,7 @@ func TestFabricClient_BlockEventRegister(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_EventQuery(t *testing.T) {
+func TestFabricClientEventQuery(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	body := req.QueryEventReqBody{
@@ -61,7 +61,7 @@ func TestFabricClient_EventQuery(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_EventRemove(t *testing.T) {
+func TestFabricClientEventRemove(t *testing.T) {
 	fabricClient := getFabricClient(t)
 	body := req.RemoveEventReqBody{
 		EventId: "9b7e0900-f671-4428-aec5-62889a110aa3",

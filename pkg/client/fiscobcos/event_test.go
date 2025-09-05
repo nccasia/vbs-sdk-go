@@ -7,7 +7,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fiscobcos/event"
 )
 
-func TestFiscoBcosClient_EventRegister(t *testing.T) {
+func TestFiscoBcosClientEventRegister(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	body := req.RegisterEventReqBody{
@@ -26,7 +26,7 @@ func TestFiscoBcosClient_EventRegister(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFiscoBcosClient_BlockEventRegister(t *testing.T) {
+func TestFiscoBcosClientBlockEventRegister(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	body := req.RegisterEventReqBody{
@@ -46,7 +46,7 @@ func TestFiscoBcosClient_BlockEventRegister(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFiscoBcosClient_EventQuery(t *testing.T) {
+func TestFiscoBcosClientEventQuery(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	body := req.QueryEventReqBody{
@@ -61,7 +61,7 @@ func TestFiscoBcosClient_EventQuery(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFiscoBcosClient_EventRemove(t *testing.T) {
+func TestFiscoBcosClientEventRemove(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 	body := req.RemoveEventReqBody{
 		EventId: "1249c5c1-0e62-485e-8116-d9e81694794c",

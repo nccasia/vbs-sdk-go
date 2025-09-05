@@ -7,7 +7,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/node"
 )
 
-func TestFabricClient_GetTransInfo(t *testing.T) {
+func TestFabricClientGetTransInfo(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	tx := req.TransReqDataBody{
@@ -23,7 +23,7 @@ func TestFabricClient_GetTransInfo(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_GetBlockInfo_ByBlockNumber(t *testing.T) {
+func TestFabricClientGetBlockInfoByBlockNumber(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	tx := req.BlockReqDataBody{
@@ -38,7 +38,7 @@ func TestFabricClient_GetBlockInfo_ByBlockNumber(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_GetBlockInfo_BlockHash(t *testing.T) {
+func TestFabricClientGetBlockInfoBlockHash(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	tx := req.BlockReqDataBody{
@@ -53,7 +53,7 @@ func TestFabricClient_GetBlockInfo_BlockHash(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_GetLedgerInfo(t *testing.T) {
+func TestFabricClientGetLedgerInfo(t *testing.T) {
 	fabricClient := getFabricClient(t)
 	res, err := fabricClient.GetLedgerInfo()
 

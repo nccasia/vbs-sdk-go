@@ -7,7 +7,7 @@ import (
 	req "github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fiscobcos/contract"
 )
 
-func TestFiscoBcosClient_QueryContract(t *testing.T) {
+func TestFiscoBcosClientQueryContract(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	args := []string{}
@@ -25,7 +25,7 @@ func TestFiscoBcosClient_QueryContract(t *testing.T) {
 	fmt.Printf("Body: %s\n", res.Body.Payload)
 }
 
-func TestFiscoBcosClient_InvokeContract(t *testing.T) {
+func TestFiscoBcosClientInvokeContract(t *testing.T) {
 	fiscobcosClient := getFiscoBcosClient(t)
 
 	args := []string{"Hello, World!!!!!!!!"}

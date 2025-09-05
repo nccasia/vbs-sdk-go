@@ -18,6 +18,11 @@ import (
 	"github.com/nccasia/vbs-sdk-go/pkg/core/constants"
 )
 
+const (
+	// PEM block type constants
+	PrivateKeyBlockType = "PRIVATE KEY"
+)
+
 var (
 	oidNamedCurveP256 = asn1.ObjectIdentifier{1, 2, 840, 10045, 3, 1, 7}
 	oidNamedCurveS256 = asn1.ObjectIdentifier{1, 3, 132, 0, 10}
@@ -84,7 +89,7 @@ func LoadPrivateKeyFromPEM(pemData []byte) (*ecdsa.PrivateKey, error) {
 	}
 
 	// Check the block type
-	if block.Type != "PRIVATE KEY" {
+	if block.Type != PrivateKeyBlockType {
 		return nil, fmt.Errorf("invalid PEM block type: %s, expected PRIVATE KEY", block.Type)
 	}
 
@@ -212,7 +217,7 @@ func parsePublicKey(keyData *publicKeyInfo) (interface{}, error) {
 
 func DetectEncryptTypeFromPEM(pemData []byte) (string, error) {
 	block, _ := pem.Decode(pemData)
-	if block == nil || block.Type != "PRIVATE KEY" {
+	if block == nil || block.Type != PrivateKeyBlockType {
 		return "", errors.New("invalid PEM block")
 	}
 
@@ -348,7 +353,7 @@ func PrivateKeyToPEM(k *ecdsa.PrivateKey) ([]byte, error) {
 
 	// Encode to PEM
 	return pem.EncodeToMemory(&pem.Block{
-		Type:  "PRIVATE KEY",
+		Type:  PrivateKeyBlockType,
 		Bytes: pkcs8Bytes,
 	}), nil
 }

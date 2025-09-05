@@ -21,7 +21,7 @@ func (c *FabricClient) GetTransInfo(body nodereq.TransReqDataBody) (*noderes.Tra
 
 	err := c.Call(GetTransInfo, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", GetTransInfo)
+		return nil, errors.WithMessagef(err, ErrCallHasError, GetTransInfo)
 	}
 	return res, nil
 }
@@ -35,7 +35,7 @@ func (c *FabricClient) GetBlockInfo(body nodereq.BlockReqDataBody) (*noderes.Blo
 
 	err := c.Call(GetBlockInfo, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", GetBlockInfo)
+		return nil, errors.WithMessagef(err, ErrCallHasError, GetBlockInfo)
 	}
 	return res, nil
 }
@@ -48,7 +48,7 @@ func (c *FabricClient) GetLedgerInfo() (*noderes.LedgerResData, error) {
 
 	err := c.Call(GetLedgerInfo, req, res)
 	if err != nil {
-		return nil, errors.WithMessagef(err, "call %s has error", GetLedgerInfo)
+		return nil, errors.WithMessagef(err, ErrCallHasError, GetLedgerInfo)
 	}
 
 	return res, nil

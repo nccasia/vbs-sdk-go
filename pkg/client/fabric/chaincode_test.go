@@ -8,13 +8,17 @@ import (
 	"github.com/nccasia/vbs-sdk-go/pkg/core/model/req/fabric/chaincode"
 )
 
-func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
+const (
+	testChaincodeName = "contract-fabric-testing-2app1748855175839756"
+)
+
+func TestFabricClientQueryChaincodeGetAll(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	args := []string{}
 	body := chaincode.QueryChaincodeReq{
 		UserID:        "tutest004",
-		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
+		ChaincodeName: testChaincodeName,
 		FunctionName:  "GetAllAssets",
 		Args:          args,
 	}
@@ -25,13 +29,13 @@ func TestFabricClient_QueryChaincode_GetAll(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_QueryChaincode_GetOne(t *testing.T) {
+func TestFabricClientQueryChaincodeGetOne(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	args := []string{"tu00011"}
 	body := chaincode.QueryChaincodeReq{
 		UserID:        "tutest003",
-		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
+		ChaincodeName: testChaincodeName,
 		FunctionName:  "ReadAsset",
 		Args:          args,
 	}
@@ -63,13 +67,13 @@ func getFabricClient(t *testing.T) *FabricClient {
 	return fabricClient
 }
 
-func TestFabricClient_PrepareProposal(t *testing.T) {
+func TestFabricClientPrepareProposal(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	args := []string{"tu0009", "green", "31", "aba", "20000"}
 	body := chaincode.InvokeChaincodeReqBody{
 		UserID:        "tutest004",
-		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
+		ChaincodeName: testChaincodeName,
 		FunctionName:  "CreateAsset",
 		Args:          args,
 	}
@@ -81,13 +85,13 @@ func TestFabricClient_PrepareProposal(t *testing.T) {
 	fmt.Println(res)
 }
 
-func TestFabricClient_InvokeChaincode(t *testing.T) {
+func TestFabricClientInvokeChaincode(t *testing.T) {
 	fabricClient := getFabricClient(t)
 
 	args := []string{"tu00013", "green", "31", "aba", "20000"}
 	body := chaincode.InvokeChaincodeReqBody{
 		UserID:        "tutest004",
-		ChaincodeName: "contract-fabric-testing-2app1748855175839756",
+		ChaincodeName: testChaincodeName,
 		FunctionName:  "CreateAsset",
 		Args:          args,
 	}
