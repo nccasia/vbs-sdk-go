@@ -1,0 +1,23 @@
+name: SonarQube
+
+on:
+  push:
+    branches: [ main, master, develop, 'releases/**' ]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # giúp báo cáo chính xác hơn
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=vbs-sdk-go
+            -Dsonar.sources=.
