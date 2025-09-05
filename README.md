@@ -26,7 +26,7 @@ func main() {
     userCode := "UserCode1"
     appCode := "AppCode1"
     privK := "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgxONXM9QezTD7JvSs\ndfMuV64CD8b0jCa2qpc3qJDGjYagCgYIKoZIzj0DAQehRANCAATNAe5f9X2LLSCt\nFP2AFwzYL6dNRb6rckxSMfVd27mjYrKSPelRY/l5bIKLbAi1iXXcUoJie6mwnLdR\nWMl8wJYf\n-----END PRIVATE KEY-----\n"
-    mspDir := "C:\\test"
+    mspDir := "./"
 
     config, err := config.NewConfig(api, userCode, appCode, privK, mspDir)
     if err != nil {
@@ -113,7 +113,7 @@ func main() {
     userCode := "UserCode1"
     appCode := "AppCode1"
     privK := "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgxONXM9QezTD7JvSs\ndfMuV64CD8b0jCa2qpc3qJDGjYagCgYIKoZIzj0DAQehRANCAATNAe5f9X2LLSCt\nFP2AFwzYL6dNRb6rckxSMfVd27mjYrKSPelRY/l5bIKLbAi1iXXcUoJie6mwnLdR\nWMl8wJYf\n-----END PRIVATE KEY-----\n"
-    mspDir := "C:\\test"
+    mspDir := "./"
 
     config, err := config.NewConfig(api, userCode, appCode, privK, mspDir)
     if err != nil {
@@ -187,6 +187,20 @@ fmt.Printf("Invoke result: %+v\n", res)
 - UserID phải tồn tại trong hệ thống
 - ContractAddress cho FiscoBcos phải chính xác
 - Private key phải đúng định dạng PEM
+
+## Hướng dẫn lấy thông tin cấu hình
+
+### Lấy userCode, appCode và privateKey
+1. Đăng nhập vào trang **Quản lý Node phân quyền VBSN**
+2. Vào mục **Chứng chỉ của tôi**
+3. Lấy `userCode` và `appCode` từ thông tin tài khoản
+4. Thực hiện **tải file keypair** của dự án xuống để lấy `privateKey`
+
+### Lấy địa chỉ API
+1. Vào mục **Dự án đã phát hành**
+2. Chọn **Chi tiết dự án**
+3. Vào **Tham số cấu hình**
+4. Lấy **Địa chỉ trung tâm dữ liệu** làm giá trị cho biến `api`
 
 ### Chống supply chain attack 
   - Tool: https://github.com/google/osv-scanner
